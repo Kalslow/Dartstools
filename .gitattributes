@@ -1,0 +1,5 @@
+# Fins de ligne LF partout : les scripts tournent sous bash sur le serveur Linux,
+# même s'ils sont modifiés et commités depuis Windows.
+* text=auto eol=lf
+# Sauf les lanceurs Windows : cmd.exe attend des fins de ligne CRLF
+*.bat text eol=crlf

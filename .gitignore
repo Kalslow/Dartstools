@@ -1,0 +1,12 @@
+# État d'un tournoi lancé en local
+tournoi/state.json
+tournoi/state.json.tmp
+tournoi/backups/
+
+# Installateur autonome généré (scripts/build-installer.sh)
+dist/
+
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db

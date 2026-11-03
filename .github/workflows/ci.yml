@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"   # Debian 12
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Serveur
+        run: python -m unittest discover -s tests -v
+      - name: Démarrage
+        run: |
+          python tournoi/server.py > demarrage.txt &
+          sleep 2
+          curl -fs http://localhost:8090/api/version
+          grep "Saisie (iPad" demarrage.txt
+          rc=0; timeout 5 python tournoi/server.py || rc=$?
+          test $rc -eq 1   # 2e lancement : port déjà utilisé, message et sortie en erreur
+      - name: Règles du tournoi
+        run: node --test tests/logic.test.js
+      - name: Installateurs
+        run: |
+          bash -n deploy/install.sh
+          bash scripts/build-installer.sh
+          bash -n dist/install_tournoi.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: install_tournoi
+          path: dist/install_tournoi.sh
